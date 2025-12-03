@@ -1,0 +1,23 @@
+{
+  "mode": "regional",
+  "region": "Ontario, Canada",
+  "adminLevel": "city",
+  "regions": [
+    "Toronto",
+    "Ottawa",
+    "Mississauga",
+    "Hamilton",
+    "London",
+    "Sudbury",
+    "Thunder Bay",
+    "Kingston"
+  ],
+  "maxDistanceKm": 900,
+  "defaultResourceTypes": ["food", "water", "medicine", "shelter"],
+  "timeHorizonDays": 7,
+  "depots": 3,
+  "baseLat": 46.5,
+  "baseLon": -80.0,
+  "remoteRegionsUrl": "http://localhost:8000/data/regions/ontario_real",
+  "remoteDepotsUrl": "http://localhost:8000/data/depots/ontario_real"
+}

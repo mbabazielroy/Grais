@@ -1,0 +1,22 @@
+{
+  "depots": [
+    {
+      "name": "Toronto Hub",
+      "lat": 43.65107,
+      "lon": -79.347015,
+      "stock": { "food": 60000, "water": 55000, "medicine": 25000, "shelter": 20000 }
+    },
+    {
+      "name": "Ottawa Hub",
+      "lat": 45.4215,
+      "lon": -75.6972,
+      "stock": { "food": 30000, "water": 28000, "medicine": 12000, "shelter": 9000 }
+    },
+    {
+      "name": "Hamilton Hub",
+      "lat": 43.2557,
+      "lon": -79.8711,
+      "stock": { "food": 20000, "water": 18000, "medicine": 8000, "shelter": 6000 }
+    }
+  ]
+}

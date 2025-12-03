@@ -1,0 +1,12 @@
+{
+  "name": "grais-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "serve -s .",
+    "dev": "serve -l 4173 ."
+  },
+  "devDependencies": {
+    "serve": "^14.2.3"
+  }
+}

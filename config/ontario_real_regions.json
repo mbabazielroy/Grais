@@ -1,0 +1,58 @@
+{
+  "regions": [
+    {
+      "name": "Toronto",
+      "population": 2930000,
+      "lat": 43.65107,
+      "lon": -79.347015,
+      "risk_factor": 0.35,
+      "current_supply": { "food": 55000, "water": 48000, "medicine": 22000, "shelter": 18000 },
+      "consumption_rate": { "food": 43000, "water": 40000, "medicine": 15000, "shelter": 12000 }
+    },
+    {
+      "name": "Ottawa",
+      "population": 1040000,
+      "lat": 45.4215,
+      "lon": -75.6972,
+      "risk_factor": 0.28,
+      "current_supply": { "food": 21000, "water": 19000, "medicine": 9000, "shelter": 7000 },
+      "consumption_rate": { "food": 16000, "water": 15000, "medicine": 7000, "shelter": 5000 }
+    },
+    {
+      "name": "Hamilton",
+      "population": 780000,
+      "lat": 43.2557,
+      "lon": -79.8711,
+      "risk_factor": 0.32,
+      "current_supply": { "food": 14000, "water": 13000, "medicine": 6000, "shelter": 5000 },
+      "consumption_rate": { "food": 12000, "water": 11000, "medicine": 5000, "shelter": 4000 }
+    },
+    {
+      "name": "London",
+      "population": 540000,
+      "lat": 42.9849,
+      "lon": -81.2453,
+      "risk_factor": 0.25,
+      "current_supply": { "food": 9000, "water": 8500, "medicine": 3800, "shelter": 3200 },
+      "consumption_rate": { "food": 8000, "water": 7500, "medicine": 3200, "shelter": 2800 }
+    },
+    {
+      "name": "Sudbury",
+      "population": 165000,
+      "lat": 46.4917,
+      "lon": -80.9919,
+      "risk_factor": 0.4,
+      "current_supply": { "food": 4000, "water": 3800, "medicine": 2000, "shelter": 1500 },
+      "consumption_rate": { "food": 3500, "water": 3300, "medicine": 1700, "shelter": 1400 }
+    },
+    {
+      "name": "Thunder Bay",
+      "population": 110000,
+      "lat": 48.3809,
+      "lon": -89.2477,
+      "risk_factor": 0.45,
+      "current_supply": { "food": 2600, "water": 2400, "medicine": 1200, "shelter": 900 },
+      "consumption_rate": { "food": 2300, "water": 2100, "medicine": 1000, "shelter": 800 }
+    }
+  ]
+}

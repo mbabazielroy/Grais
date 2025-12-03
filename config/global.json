@@ -1,0 +1,23 @@
+{
+  "mode": "global",
+  "region": "Global",
+  "adminLevel": "country",
+  "regions": [
+    "Canada",
+    "United States",
+    "Mexico",
+    "Brazil",
+    "Nigeria",
+    "India",
+    "China",
+    "Germany"
+  ],
+  "maxDistanceKm": 12000,
+  "defaultResourceTypes": ["food", "water", "medicine", "shelter"],
+  "timeHorizonDays": 10,
+  "depots": 4,
+  "baseLat": 20.0,
+  "baseLon": 0.0,
+  "remoteRegionsUrl": "",
+  "remoteDepotsUrl": ""
+}

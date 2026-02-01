@@ -15,7 +15,21 @@ class TestHealthEndpoint:
     def test_health_returns_ok(self, client):
         response = client.get("/health")
         assert response.status_code == 200
-        assert response.json() == {"status": "ok"}
+        data = response.json()
+        assert data["status"] in ["ok", "degraded"]
+        assert "version" in data
+        assert "environment" in data
+        assert "checks" in data
+
+    def test_health_ready(self, client):
+        response = client.get("/health/ready")
+        assert response.status_code == 200
+        assert response.json()["status"] == "ready"
+
+    def test_health_live(self, client):
+        response = client.get("/health/live")
+        assert response.status_code == 200
+        assert response.json()["status"] == "alive"
 
 
 class TestMetricsEndpoint:

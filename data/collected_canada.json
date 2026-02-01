@@ -1,0 +1,184 @@
+{
+  "regions": [
+    {
+      "name": "Toronto",
+      "population": 2930000,
+      "lat": 43.6532,
+      "lon": -79.3832,
+      "risk_factor": 0.5,
+      "current_supply": {
+        "food": 29300.0,
+        "water": 29300.0,
+        "medicine": 29300.0,
+        "shelter": 29300.0
+      },
+      "consumption_rate": {
+        "food": 14650.0,
+        "water": 14650.0,
+        "medicine": 14650.0,
+        "shelter": 14650.0
+      }
+    },
+    {
+      "name": "Montreal",
+      "population": 1780000,
+      "lat": 45.5017,
+      "lon": -73.5673,
+      "risk_factor": 0.356,
+      "current_supply": {
+        "food": 17800.0,
+        "water": 17800.0,
+        "medicine": 17800.0,
+        "shelter": 17800.0
+      },
+      "consumption_rate": {
+        "food": 8900.0,
+        "water": 8900.0,
+        "medicine": 8900.0,
+        "shelter": 8900.0
+      }
+    },
+    {
+      "name": "Vancouver",
+      "population": 675218,
+      "lat": 49.2827,
+      "lon": -123.1207,
+      "risk_factor": 0.1350436,
+      "current_supply": {
+        "food": 6752.18,
+        "water": 6752.18,
+        "medicine": 6752.18,
+        "shelter": 6752.18
+      },
+      "consumption_rate": {
+        "food": 3376.09,
+        "water": 3376.09,
+        "medicine": 3376.09,
+        "shelter": 3376.09
+      }
+    },
+    {
+      "name": "Calgary",
+      "population": 1306784,
+      "lat": 51.0447,
+      "lon": -114.0719,
+      "risk_factor": 0.2613568,
+      "current_supply": {
+        "food": 13067.84,
+        "water": 13067.84,
+        "medicine": 13067.84,
+        "shelter": 13067.84
+      },
+      "consumption_rate": {
+        "food": 6533.92,
+        "water": 6533.92,
+        "medicine": 6533.92,
+        "shelter": 6533.92
+      }
+    },
+    {
+      "name": "Edmonton",
+      "population": 1010899,
+      "lat": 53.5461,
+      "lon": -113.4938,
+      "risk_factor": 0.2021798,
+      "current_supply": {
+        "food": 10108.99,
+        "water": 10108.99,
+        "medicine": 10108.99,
+        "shelter": 10108.99
+      },
+      "consumption_rate": {
+        "food": 5054.495,
+        "water": 5054.495,
+        "medicine": 5054.495,
+        "shelter": 5054.495
+      }
+    },
+    {
+      "name": "Ottawa",
+      "population": 1017449,
+      "lat": 45.4215,
+      "lon": -75.6972,
+      "risk_factor": 0.2034898,
+      "current_supply": {
+        "food": 10174.49,
+        "water": 10174.49,
+        "medicine": 10174.49,
+        "shelter": 10174.49
+      },
+      "consumption_rate": {
+        "food": 5087.245,
+        "water": 5087.245,
+        "medicine": 5087.245,
+        "shelter": 5087.245
+      }
+    },
+    {
+      "name": "Winnipeg",
+      "population": 749534,
+      "lat": 49.8951,
+      "lon": -97.1384,
+      "risk_factor": 0.1499068,
+      "current_supply": {
+        "food": 7495.34,
+        "water": 7495.34,
+        "medicine": 7495.34,
+        "shelter": 7495.34
+      },
+      "consumption_rate": {
+        "food": 3747.67,
+        "water": 3747.67,
+        "medicine": 3747.67,
+        "shelter": 3747.67
+      }
+    },
+    {
+      "name": "Quebec City",
+      "population": 549459,
+      "lat": 46.8139,
+      "lon": -71.208,
+      "risk_factor": 0.1098918,
+      "current_supply": {
+        "food": 5494.59,
+        "water": 5494.59,
+        "medicine": 5494.59,
+        "shelter": 5494.59
+      },
+      "consumption_rate": {
+        "food": 2747.295,
+        "water": 2747.295,
+        "medicine": 2747.295,
+        "shelter": 2747.295
+      }
+    }
+  ],
+  "depots": [
+    {
+      "name": "Depot-Toronto",
+      "lat": 43.7532,
+      "lon": -79.28320000000001,
+      "stock": {
+        "food": 100193.43000000001,
+        "water": 100193.43000000001,
+        "medicine": 100193.43000000001,
+        "shelter": 100193.43000000001
+      }
+    },
+    {
+      "name": "Depot-Montreal",
+      "lat": 45.4017,
+      "lon": -73.6673,
+      "stock": {
+        "food": 100193.43000000001,
+        "water": 100193.43000000001,
+        "medicine": 100193.43000000001,
+        "shelter": 100193.43000000001
+      }
+    }
+  ],
+  "metadata": {
+    "collected_at": "2026-02-01T20:54:19.768024",
+    "source": "GRAIS DataCollector"
+  }
+}

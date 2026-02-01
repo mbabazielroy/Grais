@@ -210,18 +210,28 @@ def get_admin_metrics() -> Dict[str, Any]:
 
 @app.get("/data/regions/{config_name}")
 def get_regions_data(config_name: str) -> Dict[str, Any]:
-    path = (CONFIG_DIR / f"{config_name}_remote_regions.json")
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="Regions data not found")
-    return json.loads(path.read_text(encoding="utf-8"))
+    # Try multiple naming conventions for flexibility
+    candidates = [
+        CONFIG_DIR / f"{config_name}_remote_regions.json",
+        CONFIG_DIR / f"{config_name}_regions.json",
+    ]
+    for path in candidates:
+        if path.exists():
+            return json.loads(path.read_text(encoding="utf-8"))
+    raise HTTPException(status_code=404, detail="Regions data not found")
 
 
 @app.get("/data/depots/{config_name}")
 def get_depots_data(config_name: str) -> Dict[str, Any]:
-    path = (CONFIG_DIR / f"{config_name}_remote_depots.json")
-    if not path.exists():
-        raise HTTPException(status_code=404, detail="Depots data not found")
-    return json.loads(path.read_text(encoding="utf-8"))
+    # Try multiple naming conventions for flexibility
+    candidates = [
+        CONFIG_DIR / f"{config_name}_remote_depots.json",
+        CONFIG_DIR / f"{config_name}_depots.json",
+    ]
+    for path in candidates:
+        if path.exists():
+            return json.loads(path.read_text(encoding="utf-8"))
+    raise HTTPException(status_code=404, detail="Depots data not found")
 
 
 @app.post("/predict")
@@ -392,8 +402,15 @@ def _metadata(data_source: str = "synthetic", warnings=None, meta: Optional[Dict
     from grais.optimization import pywraplp, pulp  # type: ignore
     from grais.forecasting import Prophet  # type: ignore
 
+    # Check sklearn availability
+    try:
+        from sklearn.linear_model import LogisticRegression
+        sklearn_available = True
+    except ImportError:
+        sklearn_available = False
+
     capabilities = {
-        "sklearn": bool(LogisticRegression),
+        "sklearn": sklearn_available,
         "timeseries": timeseries,
         "prophet": Prophet is not None,
         "ortools": pywraplp is not None,

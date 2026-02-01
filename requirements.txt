@@ -1,11 +1,14 @@
 fastapi==0.115.0
 uvicorn==0.30.6
 numpy>=2.1.0
+pandas>=2.0.0
 pulp==2.8.0
 scikit-learn==1.5.2; python_version<'3.13'
 ortools==9.11.4210; python_version<'3.13'
 openai==1.40.1
 python-dotenv==1.0.1
-prophet==1.1.5; python_version<'3.13'
+prophet>=1.1.5; python_version<'3.13'
 requests==2.32.3
 pytest==8.3.3
+httpx>=0.25.0
+openpyxl>=3.1.0

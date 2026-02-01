@@ -1,0 +1,5 @@
+name,lat,lon,stock_food,stock_water,stock_medicine,stock_shelter
+Depot-Toronto-Central,43.7000,-79.4000,100000,150000,50000,30000
+Depot-Ottawa-East,45.4000,-75.7000,80000,120000,40000,25000
+Depot-London-West,43.0000,-81.2000,60000,90000,30000,20000
+Depot-Hamilton-South,43.2000,-79.9000,70000,100000,35000,22000

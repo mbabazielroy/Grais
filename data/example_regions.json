@@ -1,0 +1,54 @@
+{
+  "regions": [
+    {
+      "name": "Toronto",
+      "population": 2930000,
+      "lat": 43.6532,
+      "lon": -79.3832,
+      "risk_factor": 0.3,
+      "current_supply": {"food": 50000, "water": 80000, "medicine": 20000, "shelter": 10000},
+      "consumption_rate": {"food": 5000, "water": 8000, "medicine": 2000, "shelter": 1000}
+    },
+    {
+      "name": "Ottawa",
+      "population": 1017449,
+      "lat": 45.4215,
+      "lon": -75.6972,
+      "risk_factor": 0.2,
+      "current_supply": {"food": 30000, "water": 45000, "medicine": 12000, "shelter": 6000},
+      "consumption_rate": {"food": 3000, "water": 4500, "medicine": 1200, "shelter": 600}
+    },
+    {
+      "name": "Mississauga",
+      "population": 721599,
+      "lat": 43.5890,
+      "lon": -79.6441,
+      "risk_factor": 0.25,
+      "current_supply": {"food": 25000, "water": 40000, "medicine": 10000, "shelter": 5000},
+      "consumption_rate": {"food": 2500, "water": 4000, "medicine": 1000, "shelter": 500}
+    },
+    {
+      "name": "Hamilton",
+      "population": 569353,
+      "lat": 43.2557,
+      "lon": -79.8711,
+      "risk_factor": 0.35,
+      "current_supply": {"food": 20000, "water": 35000, "medicine": 8000, "shelter": 4000},
+      "consumption_rate": {"food": 2000, "water": 3500, "medicine": 800, "shelter": 400}
+    },
+    {
+      "name": "London",
+      "population": 422324,
+      "lat": 42.9849,
+      "lon": -81.2453,
+      "risk_factor": 0.3,
+      "current_supply": {"food": 18000, "water": 30000, "medicine": 7000, "shelter": 3500},
+      "consumption_rate": {"food": 1800, "water": 3000, "medicine": 700, "shelter": 350}
+    }
+  ],
+  "metadata": {
+    "source": "Ontario Open Data - Example",
+    "last_updated": "2024-01-15T10:00:00Z",
+    "description": "Sample region data for GRAIS demonstration"
+  }
+}

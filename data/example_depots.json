@@ -1,0 +1,32 @@
+{
+  "depots": [
+    {
+      "name": "Depot-Toronto-Central",
+      "lat": 43.7000,
+      "lon": -79.4000,
+      "stock": {"food": 100000, "water": 150000, "medicine": 50000, "shelter": 30000}
+    },
+    {
+      "name": "Depot-Ottawa-East",
+      "lat": 45.4000,
+      "lon": -75.7000,
+      "stock": {"food": 80000, "water": 120000, "medicine": 40000, "shelter": 25000}
+    },
+    {
+      "name": "Depot-London-West",
+      "lat": 43.0000,
+      "lon": -81.2000,
+      "stock": {"food": 60000, "water": 90000, "medicine": 30000, "shelter": 20000}
+    },
+    {
+      "name": "Depot-Hamilton-South",
+      "lat": 43.2000,
+      "lon": -79.9000,
+      "stock": {"food": 70000, "water": 100000, "medicine": 35000, "shelter": 22000}
+    }
+  ],
+  "metadata": {
+    "source": "Ontario Emergency Management - Example",
+    "last_updated": "2024-01-15T10:00:00Z"
+  }
+}

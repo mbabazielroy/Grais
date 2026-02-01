@@ -84,6 +84,12 @@ Thumbs.db
 .env.local
 .env.*.local
 
+# Generated reports and logs
+logs/
+reports/
+data/tenant_data/
+data/collected_*.json
+
 # Node modules (frontend)
 node_modules/
 

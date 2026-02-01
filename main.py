@@ -12,7 +12,7 @@ import os
 import time
 from typing import Any, Dict, List, Optional, Union
 
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, HTTPException, Query, Request, Depends, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, field_validator
@@ -63,6 +63,18 @@ from grais.validation import (
     MAX_HORIZON_DAYS,
     MAX_PLANNING_PERIODS,
 )
+from grais.security import (
+    get_current_user,
+    require_permission,
+    require_role,
+    AuthenticatedUser,
+    Permission,
+    Role,
+    api_key_manager,
+    audit_logger,
+    create_api_key,
+)
+from grais.reporting import ReportGenerator, export_geojson
 
 # Configure logging
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
@@ -70,8 +82,11 @@ LOG_JSON = os.getenv("LOG_FORMAT", "text").lower() == "json"
 setup_logging(level=LOG_LEVEL, json_format=LOG_JSON)
 logger = logging.getLogger("grais")
 
+# Authentication requirement
+REQUIRE_AUTH = os.getenv("REQUIRE_AUTH", "false").lower() == "true"
+
 # Application metadata
-APP_VERSION = "0.2.0"
+APP_VERSION = "0.3.0"  # Enterprise edition
 APP_TITLE = "GRAIS - Global Resource Allocation Intelligence System"
 APP_DESCRIPTION = """
 Production-ready API for predicting resource shortages, optimizing supply allocations,
@@ -101,8 +116,9 @@ app = FastAPI(
         {"name": "optimization", "description": "Resource allocation optimization"},
         {"name": "prioritization", "description": "Region prioritization"},
         {"name": "pipeline", "description": "Full recommendation pipeline"},
-        {"name": "data", "description": "Data access endpoints"},
+        {"name": "data", "description": "Data access and export endpoints"},
         {"name": "metrics", "description": "Observability and metrics"},
+        {"name": "admin", "description": "Administrative endpoints (requires elevated privileges)"},
     ],
 )
 
@@ -958,6 +974,242 @@ def recommend_compare(req: RecommendCompareRequest) -> Dict[str, Any]:
         "scenarios": [{**_summary(s), "scenario": s.get("scenario")} for s in scenarios_out],
     }
     return {"baseline": baseline, "scenarios": scenarios_out, "comparison": comparison}
+
+
+# ==============================================================================
+# Export Endpoints (Enterprise Feature)
+# ==============================================================================
+
+class ExportRequest(BaseModel):
+    """Request body for report export."""
+    configName: str = Field(default="global", max_length=64)
+    dataSource: Optional[str] = Field(default=None)
+    format: str = Field(
+        default="json",
+        description="Export format: 'json', 'csv', 'geojson', 'excel'",
+    )
+
+
+@app.post(
+    "/export/geojson",
+    tags=["data"],
+    summary="Export as GeoJSON",
+    description="Export predictions and priorities as GeoJSON for GIS integration (ESRI, QGIS, etc.).",
+)
+def export_geojson_endpoint(
+    req: ExportRequest,
+    user: AuthenticatedUser = Depends(get_current_user),
+) -> Dict[str, Any]:
+    """Export data as GeoJSON for GIS systems."""
+    cfg = _load_config(None, req.configName)
+    regions, depots, load_warnings, source_used, meta = _get_regions_and_depots(
+        cfg, req.dataSource or "synthetic"
+    )
+    predictions = predict_shortages(regions, cfg.get("timeHorizonDays", 7), cfg["mode"], cfg)
+    
+    # Get priorities too
+    supplies = {depot.name: depot.stock for depot in depots}
+    distances = build_distance_matrix(depots, regions)
+    demands = generate_multi_resource_demands(predictions, cfg)
+    allocation = optimize_allocation(supplies, demands, distances, cfg["mode"], cfg)
+    priorities = prioritize_regions(predictions, allocation, cfg["mode"], cfg)
+    
+    return export_geojson(predictions, priorities)
+
+
+@app.post(
+    "/export/summary",
+    tags=["data"],
+    summary="Generate executive summary",
+    description="Generate a markdown executive summary for decision makers.",
+)
+def export_summary_endpoint(
+    req: ExportRequest,
+    user: AuthenticatedUser = Depends(get_current_user),
+) -> Dict[str, Any]:
+    """Generate executive summary report."""
+    cfg = _load_config(None, req.configName)
+    regions, depots, load_warnings, source_used, meta = _get_regions_and_depots(
+        cfg, req.dataSource or "synthetic"
+    )
+    predictions = predict_shortages(regions, cfg.get("timeHorizonDays", 7), cfg["mode"], cfg)
+    supplies = {depot.name: depot.stock for depot in depots}
+    distances = build_distance_matrix(depots, regions)
+    demands = generate_multi_resource_demands(predictions, cfg)
+    allocation = optimize_allocation(supplies, demands, distances, cfg["mode"], cfg)
+    priorities = prioritize_regions(predictions, allocation, cfg["mode"], cfg)
+    
+    result = {
+        "predictions": predictions,
+        "allocation": allocation,
+        "priorities": priorities,
+        "config": cfg,
+        "metadata": _metadata(source_used, load_warnings, meta),
+    }
+    
+    generator = ReportGenerator(result)
+    return {
+        "summary": generator.generate_summary(),
+        "format": "markdown",
+    }
+
+
+# ==============================================================================
+# Admin Endpoints (Enterprise Feature)
+# ==============================================================================
+
+class CreateAPIKeyRequest(BaseModel):
+    """Request to create a new API key."""
+    name: str = Field(..., description="Descriptive name for the API key", max_length=128)
+    role: str = Field(..., description="Role: viewer, analyst, operator, admin")
+    organization: str = Field(..., description="Organization name", max_length=128)
+    expires_in_days: Optional[int] = Field(default=365, ge=1, le=3650)
+
+
+class AuditQueryRequest(BaseModel):
+    """Request to query audit logs."""
+    user_id: Optional[str] = Field(default=None, max_length=64)
+    organization: Optional[str] = Field(default=None, max_length=128)
+    event_type: Optional[str] = Field(default=None, max_length=64)
+    success: Optional[bool] = Field(default=None)
+    limit: int = Field(default=100, ge=1, le=1000)
+
+
+@app.post(
+    "/admin/api-keys",
+    tags=["admin"],
+    summary="Create API key",
+    description="Create a new API key for an organization. Requires admin role.",
+)
+def create_api_key_endpoint(
+    req: CreateAPIKeyRequest,
+    user: AuthenticatedUser = Depends(require_role(Role.ADMIN)),
+) -> Dict[str, Any]:
+    """Create a new API key."""
+    result = create_api_key(
+        name=req.name,
+        role=req.role,
+        organization=req.organization,
+        expires_in_days=req.expires_in_days,
+    )
+    
+    # Log the action
+    return {
+        "success": True,
+        "api_key": result,
+        "warning": "Store this key securely - it cannot be retrieved again.",
+    }
+
+
+@app.get(
+    "/admin/api-keys",
+    tags=["admin"],
+    summary="List API keys",
+    description="List all API keys (without the actual key values). Requires admin role.",
+)
+def list_api_keys_endpoint(
+    organization: Optional[str] = Query(default=None),
+    user: AuthenticatedUser = Depends(require_role(Role.ADMIN)),
+) -> Dict[str, Any]:
+    """List API keys."""
+    keys = api_key_manager.list_keys(organization)
+    return {
+        "keys": keys,
+        "count": len(keys),
+    }
+
+
+@app.delete(
+    "/admin/api-keys/{key_id}",
+    tags=["admin"],
+    summary="Revoke API key",
+    description="Revoke an API key. Requires admin role.",
+)
+def revoke_api_key_endpoint(
+    key_id: str,
+    user: AuthenticatedUser = Depends(require_role(Role.ADMIN)),
+) -> Dict[str, Any]:
+    """Revoke an API key."""
+    success = api_key_manager.revoke_key(key_id)
+    if not success:
+        raise HTTPException(status_code=404, detail=f"API key {key_id} not found")
+    return {"success": True, "key_id": key_id, "status": "revoked"}
+
+
+@app.post(
+    "/admin/audit/query",
+    tags=["admin"],
+    summary="Query audit logs",
+    description="Query audit logs with filters. Requires admin role.",
+)
+def query_audit_logs_endpoint(
+    req: AuditQueryRequest,
+    user: AuthenticatedUser = Depends(require_role(Role.ADMIN)),
+) -> Dict[str, Any]:
+    """Query audit logs."""
+    entries = audit_logger.query(
+        user_id=req.user_id,
+        organization=req.organization,
+        event_type=req.event_type,
+        success=req.success,
+        limit=req.limit,
+    )
+    
+    return {
+        "entries": [
+            {
+                "timestamp": e.timestamp.isoformat(),
+                "event_type": e.event_type,
+                "action": e.action,
+                "user_id": e.user_id,
+                "organization": e.organization,
+                "resource": e.resource,
+                "request_path": e.request_path,
+                "response_status": e.response_status,
+                "success": e.success,
+            }
+            for e in entries
+        ],
+        "count": len(entries),
+    }
+
+
+@app.get(
+    "/admin/system",
+    tags=["admin"],
+    summary="System information",
+    description="Get system status and configuration. Requires admin role.",
+)
+def system_info_endpoint(
+    user: AuthenticatedUser = Depends(require_role(Role.ADMIN)),
+) -> Dict[str, Any]:
+    """Get system information."""
+    return {
+        "version": APP_VERSION,
+        "environment": ENVIRONMENT,
+        "auth_required": REQUIRE_AUTH,
+        "rate_limit_enabled": RATE_LIMIT_ENABLED,
+        "rate_limit_rpm": RATE_LIMIT_RPM,
+        "capabilities": _metadata()["capabilities"],
+    }
+
+
+@app.get(
+    "/whoami",
+    tags=["admin"],
+    summary="Current user info",
+    description="Get information about the current authenticated user.",
+)
+def whoami_endpoint(
+    user: AuthenticatedUser = Depends(get_current_user),
+) -> Dict[str, Any]:
+    """Get current user information."""
+    return {
+        "user_id": user.user_id,
+        "organization": user.organization,
+        "role": user.role.value,
+        "permissions": [p.value for p in user.permissions],
+    }
 
 
 # ==============================================================================
